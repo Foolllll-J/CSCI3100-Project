@@ -6,12 +6,12 @@
 >```userName```: string, unique  
 >```shoppingCartInfo```: array  
     >element: object  
-    >>```productID```: string  
-    >>```quantity```: number  
+    > >```productID```: string  
+    > >```quantity```: number  
 >```orderHistory```: object  
-    >>```orderList```: array  
-        >>>element: string - each element is an order ID  
-    >>```totalOrderTag```: this is to show the total number of tags in the user's order history, only used by back-end recommendation algorithm and will not be returned to the front-end
+    > >```orderList```: array  
+        > > >element: string - each element is an order ID  
+    > >```totalOrderTag```: this is to show the total number of tags in the user's order history, only used by back-end recommendation algorithm and will not be returned to the front-end
         
 
 2. Product:  
@@ -29,9 +29,9 @@
 >```orderStatusDescription```: string  
 >```orderTotalPrice```: number  
 >```orderProductList```: array  
-    >>element: object
-    >>```productID```: string  
-    >>```quantity```: number  
-    >>```productName```: string  
-    >>```productPrice```: number  
-    >>```productImage```: string   
+    > >element: object
+    > >```productID```: string  
+    > >```quantity```: number  
+    > >```productName```: string  
+    > >```productPrice```: number  
+    > >```productImage```: string   
