@@ -11,7 +11,6 @@ import {
 } from 'react-router-dom';
 
 import Home from './components/HomePage';
-import UserInfo from './components/UserInfoPage';
 import ProductInfo from './components/ProductInfoPage';
 import Search from './components/SearchPage';
 import ShoppingCart from './components/ShoppingCartPage';
@@ -35,7 +34,6 @@ function App() {
 
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/user-info" element={<UserInfo />} />
                 <Route path="/product-info" element={<ProductInfo />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/shopping-cart" element={<ShoppingCart />} />
@@ -69,6 +67,15 @@ const NoMatch = () => {
         navigate('/');
       }
     }, [time]);
-}
+
+    return (
+        <div className='main-container'>
+            <h3>
+                No match or no access permission for <code>{location.pathname}</code>!<br />
+                Redirecting to home page in {time}s...
+            </h3>
+        </div>
+    );
+};
 
 export default App;
