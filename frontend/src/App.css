@@ -169,6 +169,7 @@ h1 {
     align-items: center;
     justify-content: center;
     position: relative;
+    cursor: pointer;
 }
 
 .home-nav-category-cell:hover {
