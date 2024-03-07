@@ -34,4 +34,4 @@
     ```quantity```: number  
     ```productName```: string  
     ```productPrice```: number  
-    ```productImage```: string  
+    ```productImage```: string   
