@@ -1,38 +1,206 @@
-.App {
+/*.App {
   text-align: center;
+}*/
+
+body {
+    --CUHK-purple: #740f6B;
+    --CUHK-yellow: #E6B001;
+    --hover-purple: #5a0c53;
+    --active-purple: #44093e;
+    --Map-blue: #1C73E8;
+    --border-grey: #DEE2E6;
+    --hover-grey: #F8F9FA;
+    --active-grey: #E9ECEF;
+    --description-grey: #AAAAAA;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Tool classes */
+.flex {
+    display: flex;
+    align-items: center;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.margin-bot {
+    margin-bottom: 0.5vh;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.width-50 {
+    width: 50vw;
 }
 
-.App-link {
-  color: #61dafb;
+.border-div {
+    border: 0.5px solid var(--border-grey);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.description {
+    font-size: 12px;
+    color: var(--description-grey);
+    margin: 0;
+}
+
+/* Navigator */
+nav {
+    width: 100vw;
+    height: 5vh;
+    background-color: var(--CUHK-purple);
+    position: fixed;
+    top: 0;
+    display: flex;
+    align-items: center;
+    z-index: 100;
+    color: white;
+}
+
+nav a {
+    text-decoration: none;
+    color: white;
+}
+
+h1 {
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+  
+.lb {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+  
+.nav-cell {
+    font-size: 2vh;
+    padding: 0 1vw;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+  
+.nav-cell:hover {
+    background-color: var(--hover-purple);
+}
+
+.nav-cell:active {
+    background-color: var(--active-purple);
+}
+  
+.nav-cell.left:nth-child(1) {
+    margin-left: 2vw;
+}
+
+.nav-cell.right:nth-child(1) {
+    margin-right: 3vw;
+    position: relative;
+    right: 5vw;
+    max-width: 12vw;
+    transform: translateX(50%);
+}
+
+.dropdown-cell {
+    width: 10vw;
+    height: 6vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-left: 1px solid var(--border-grey);
+    border-bottom: 1px solid var(--border-grey);
+    border-right: 1px solid var(--border-grey);
+    color: var(--CUHK-purple);
+    cursor: pointer;
+    z-index: 10000;
+}
+
+.dropdown-cell:hover {
+    background-color: var(--hover-grey);
+}
+
+.dropdown-cell:active {
+    background-color: var(--active-grey);
+}
+
+/* Main container */
+.main-container {
+    width: 80vw;
+    position: relative;
+    left: 10vw;
+}
+
+/* Home page */
+.home-nav {
+    width: 100vw;
+    height: 7vh;
+    background-color: white;
+    position: fixed;
+    top: 5vh;
+    left: 0;
+    display: flex;
+    align-items: center;
+    z-index: 100;
+    color: var(--description-grey);
+    font-weight: 500;
+    border-bottom: 2px solid var(--border-grey);
+}
+
+.home-nav-logo-container {
+    width: 25%;
+    height: 7vh;
+    position: fixed;
+    left: 0;
+    display: flex;
+    align-items: center;
+}
+
+.home-nav-category-container {
+    width: 50%;
+    height: 7vh;
+    position: fixed;
+    left: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-nav-category-cell {
+    font-size: 2.2vh;
+    width: 20%;
+    height: 6vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.home-nav-category-cell:hover {
+    background-color: var(--hover-grey);
+}
+
+.home-nav-category-cell:active {
+    background-color: var(--active-grey);
+}
+
+.home-nav-searchbox-container {
+    width: 25%;
+    height: 7vh;
+    position: fixed;
+    right: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Login page */
+.login-form {
+    text-align: center;
+    border-radius: 10px;
+    padding: 20px;
+    width: 300px;
+    margin: auto;
+    margin-top: 10vh;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+}
+
+.login-form * {
+    margin-bottom: 1vh;
 }

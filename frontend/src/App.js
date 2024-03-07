@@ -10,6 +10,7 @@ import {
     useNavigate
 } from 'react-router-dom';
 
+import AdminPage from './components/AdminPage';
 import Home from './components/HomePage';
 import ProductInfo from './components/ProductInfoPage';
 import Search from './components/SearchPage';
@@ -20,17 +21,52 @@ import Login from './components/LoginPage';
 
 
 function App() {
-    const [hello, setHello] = useState("")
+    const [user, setUser] = useState({})
+    const [isUserNameHovered, setIsUserNameHovered] = useState(false)
 
     useEffect(() => {
-        setHello("Hello World")
+        setUser({
+            email: "niumoniumo@gmail.com",
+            password: "qqwwee",
+            userName: "niumo",
+            shoppingCartInfo: [],
+            orderHistory: {}
+        })
     }, [])
+
+    function onMouseEnterUserName() {
+        setIsUserNameHovered(true);
+    }
+
+    function onMouseLeaveUserName() {
+        setIsUserNameHovered(false);
+    }
+
+    // Todo
+    function logout() {
+        console.log(1)
+    }
 
     return (
         <BrowserRouter>
-            <div className="App">
-                <h1>{hello}</h1>
-            </div>
+            <nav>
+                <div className='width-50 flex' style={{height: '100%'}}>
+                    <div className='nav-cell left'>
+                        <Link to="/">Home</Link>
+                    </div>
+                </div>
+                <div className='width-50 flex' style={{height: '100%', flexDirection: 'row-reverse'}}>
+                    <div className='nav-cell right' onMouseEnter={user.username ? onMouseEnterUserName : undefined} onMouseLeave={user.username ? onMouseLeaveUserName : undefined}>
+                        {user && user.username ?
+                        <div className='user-name'>{user.username.length > 10 ? user.username.substring(0, 8) + '...' : user.username}</div> :
+                        <Link to='/login' className='user-name' style={{cursor: 'pointer'}}>Login</Link>}
+                    </div>
+                    <div className='dropdown' style={{display: isUserNameHovered ? 'flex' : 'none'}} onMouseEnter={onMouseEnterUserName} onMouseLeave={onMouseLeaveUserName}>
+                        <Link className='dropdown-cell' to='favorites'> My favorites</Link>
+                        <div className='dropdown-cell' onClick={logout}>Log out</div>
+                    </div>
+                </div>
+            </nav>
 
             <Routes>
                 <Route path="/" element={<Home />} />
