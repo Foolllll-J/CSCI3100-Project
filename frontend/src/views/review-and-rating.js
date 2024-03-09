@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import TestimonialCard3 from '../components/testimonial-card3'
 import './review-and-rating.css'
 
 const ReviewAndRating = (props) => {

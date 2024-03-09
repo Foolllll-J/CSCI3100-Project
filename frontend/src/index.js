@@ -20,6 +20,8 @@ import ShoppingCart from './views/shopping-cart'
 import ReviewAndRating from './views/review-and-rating'
 import Home from './views/home'
 import NotFound from './views/not-found'
+import Login from './views/login'
+import Signup from './views/signup'
 
 const App = () => {
   return (
@@ -74,6 +76,8 @@ const App = () => {
         <Route component={ShoppingCart} exact path="/shopping-cart" />
         <Route component={ReviewAndRating} exact path="/review-and-rating" />
         <Route component={Home} exact path="/" />
+        <Route component={Login} exact path='/login' />
+        <Route component={Signup} exact path='/signup' />
         <Route component={NotFound} path="**" />
         <Redirect to="**" />
       </Switch>
