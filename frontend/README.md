@@ -34,6 +34,31 @@
     - ```quantity```: number  
     - ```productName```: string  
     - ```productPrice```: number  
-    - ```productImage```: string   
+    - ```productImage```: string     
 
-    123
+## APIs
+1. 登录时提交用户名和密码：  
+req:  
+```
+post('/api/login', {
+  username,
+  password
+})
+```  
+登录成功的res:
+```
+{
+  username,
+  isAdmin: 一个boolean,
+  favoriteVenueID: [1, 2, 3, ...]
+}
+```  
+登录失败的res:  
+密码错误
+```
+res.status(401).json({ message: 'Authentication failed. Please try again.' });
+```
+用户不存在
+```
+res.status(401).json({ message: 'No user credential found. Please sign up.' });
+```
