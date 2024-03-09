@@ -47,12 +47,10 @@ post('/api/login', {
 ```  
 登录成功的res:
 ```
-{
-  username,
-  isAdmin: 一个boolean,
-  favoriteVenueID: [1, 2, 3, ...]
-}
-```  
+res.status(200)
+```
+并且向用户名对应的邮箱发送验证码  
+
 登录失败的res:  
 密码错误
 ```

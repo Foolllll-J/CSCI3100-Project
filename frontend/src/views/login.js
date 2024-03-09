@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios'
 import './login.css'
 
-const SERVER_URL = 'localhost:3000'
+const SERVER_URL = 'localhost:5000'
 
-function Login() {
+function Login(props) {
     const [status, setStatus] = useState('password')
     const [errorMessage, setErrorMessage] = useState('')
 
@@ -13,9 +13,11 @@ function Login() {
     const [password, setPassword] = useState('')
     const [verificationCode, setVerificationCode] = useState('')
 
-    const [user, setUser] = useState({})
+    const history = useHistory();
 
-    const navigate = useNavigate()
+    useEffect(() => {
+        
+    }, [])
 
     const login = async (e) => {
         e.preventDefault();
@@ -24,9 +26,10 @@ function Login() {
                 userName: userName,
                 password: password
             })
+            setErrorMessage('')
             setStatus('email-verification')
         } catch (error) {
-            if (error.response.data.message) {
+            if (error.response && error.response.data && error.response.data.message) {
                 setErrorMessage(error.response.data.message);
             } else {
                 setErrorMessage('Something went wrong. Please try again.');
@@ -42,15 +45,16 @@ function Login() {
                 verificationCode: verificationCode
             });
             const { user, userToken } = response.data;
-            onLogin(user)
-            navigate('/');
+            props.onVerification(user)
+            localStorage.setItem('userToken', JSON.stringify(userToken))
+            history.push('/');
         } catch (error) {
-            if (error.response.data.message) {
+            if (error.response && error.response.data && error.response.data.message) {
                 setErrorMessage(error.response.data.message);
             } else {
                 setErrorMessage('Something went wrong. Please try again.');
             }
-            setPassword('')
+            setVerificationCode('')
         }
     };
 
@@ -87,7 +91,7 @@ function Login() {
                             key="password-input"
                         />
                     </div>
-                    <button type="submit" id='send' className="button" style={{margin: '6vh 0', left: '50%', transform: 'translateX(-50%)'}}>Submit</button>
+                    <button type="submit" id='send-password' className="button" style={{margin: '6vh 0', left: '50%', transform: 'translateX(-50%)'}}>Submit</button>
                 </form>
                 {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                 <Link to='/signup' className='link'>Don't have an account? Sign up</Link>
@@ -95,6 +99,7 @@ function Login() {
 
             <div className='login-form' style={{display: status === 'email-verification' ? 'flex' : 'none'}}>
                 <h1 className='Heading-1'>Log in</h1>
+                <p style={{marginTop: '2vh', fontSize: '18px', fontWeight: '300'}}>A verification email is sent to your mail address.<br />Please check it and input the verification code.</p>
                 <form onSubmit={(e) => emailVerification(e)}>
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '4vh'}}>
                         <label htmlFor="verification-code" className='lb' style={{fontSize: '20px', fontWeight: '400'}}>Verification code</label>
@@ -110,7 +115,7 @@ function Login() {
                             key="verification-code-input"
                         />
                     </div>
-                    <button type="submit" id='send' className="button" style={{margin: '6vh 0', left: '50%', transform: 'translateX(-50%)'}}>Submit</button>
+                    <button type="submit" id='send-code' className="button" style={{margin: '6vh 0', left: '50%', transform: 'translateX(-50%)'}}>Submit</button>
                 </form>
                 {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
             </div>
