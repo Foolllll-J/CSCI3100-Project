@@ -5,3 +5,7 @@
     flex-direction: column;
     align-items: center;
 }
+
+.link {
+    color: rgb(150, 171, 144);
+}
