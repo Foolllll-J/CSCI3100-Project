@@ -253,7 +253,6 @@
 }
 .review-and-rating-main {
   width: 100%;
-  height: 1972px;
   display: flex;
   position: relative;
   align-items: center;
@@ -301,7 +300,6 @@
 }
 .review-and-rating-container03 {
   width: 100%;
-  height: 627px;
   display: flex;
   align-items: flex-start;
 }

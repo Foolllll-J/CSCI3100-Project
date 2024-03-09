@@ -1,15 +1,10 @@
 import React from 'react'
 
-import { Helmet } from 'react-helmet'
-
 import './not-found.css'
 
 const NotFound = (props) => {
   return (
     <div className="not-found-container">
-      <Helmet>
-        <title>404 - Not Found</title>
-      </Helmet>
       <h3>OOPS! PAGE NOT FOUND</h3>
       <div className="not-found-container1">
         <h1 className="not-found-text1">404</h1>
