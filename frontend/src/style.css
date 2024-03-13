@@ -557,6 +557,14 @@
   }
 }
 
+pre {
+    color: var(--dl-color-gray-black80);
+    font-style: normal;
+    font-weight: 500;
+    line-height: 14px;
+    text-decoration: none;
+}
+
 
 .main-container {
     width: 100vw;

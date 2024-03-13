@@ -26,8 +26,11 @@ function Login(props) {
                 userName: userName,
                 password: password
             })
-            setErrorMessage('')
-            setStatus('email-verification')
+            if (response.statusText === 'OK') {
+                setErrorMessage('')
+                setStatus('email-verification')
+                console.log(2)
+            }
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
                 setErrorMessage(error.response.data.message);
@@ -41,7 +44,7 @@ function Login(props) {
     const emailVerification = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`http://${SERVER_URL}/api/email-verification`, {
+            const response = await axios.post(`http://${SERVER_URL}/api/login-email-verification`, {
                 verificationCode: verificationCode
             });
             const { user, userToken } = response.data;
@@ -115,7 +118,7 @@ function Login(props) {
                             key="verification-code-input"
                         />
                     </div>
-                    <button type="submit" id='send-code' className="button" style={{margin: '6vh 0', left: '50%', transform: 'translateX(-50%)'}}>Submit</button>
+                    <button type="submit" id='submit-code' className="button" style={{margin: '6vh 0', left: '50%', transform: 'translateX(-50%)', width: '100px', display: 'flex', justifyContent: 'center' }}><p>Submit</p></button>
                 </form>
                 {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
             </div>

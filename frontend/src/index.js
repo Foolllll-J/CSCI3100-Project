@@ -33,11 +33,10 @@ const App = () => {
 
     useEffect(() => {
         const storedUserToken = localStorage.getItem('userToken');
-        if (storedUserToken) {
+        if (storedUserToken && storedUserToken !== undefined && storedUserToken !== 'undefined') {
             const userToken = JSON.parse(storedUserToken);
             setUserToken(userToken)
         }
-        console.log(user, userToken)
 
         //Todo: 进入时发送userToken获取user信息
 
@@ -96,7 +95,7 @@ const App = () => {
             <Route component={ReviewAndRating} exact path="/review-and-rating" />
             <Route component={Home} exact path="/" />
             <Route exact path='/login' render={(props) => <Login {...props} onVerification={setUserAfterLogin} />} />
-            <Route component={Signup} exact path='/signup' />
+            <Route exact path='/signup' render={(props) => <Signup {...props} onVerification={setUserAfterLogin} />} />
             <Route component={NotFound} path="**" />
             <Redirect to="**" />
         </Switch>

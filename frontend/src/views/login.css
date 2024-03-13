@@ -9,3 +9,10 @@
 .link {
     color: rgb(150, 171, 144);
 }
+
+.button-1 {
+    margin: 6vh 0;
+    width: 100px;
+    display: flex;
+    justify-content: center;
+}
