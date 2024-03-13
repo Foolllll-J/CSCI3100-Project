@@ -104,14 +104,14 @@ res.status(200)
 res.status(500).json({ message: 'Failed to send email. Please ensure your email address is correct.' });
 ```
 
-4. 注册时提交验证码、userName、password：
+4. 注册时提交验证码、userName、password：  
 req:
 ```
-{
+post('/api/signup', {
   userName,
   password,
   verificationCode
-}
+})
 ```
 
 而后服务器端创建新用户  
