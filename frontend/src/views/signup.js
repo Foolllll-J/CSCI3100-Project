@@ -11,14 +11,30 @@ function Signup(props) {
     const [userName, setUserName] = useState('')
     const [password, setPassword] = useState('')
     const [email, setEmail] = useState('')
+    const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(false);
+    const [countdown, setCountdown] = useState(60);
     const [isVerificationCodeInputDisabled, setIsVerificationCodeInputDisabled] = useState(true)
     const [verificationCode, setVerificationCode] = useState('')
 
     const history = useHistory();
 
     useEffect(() => {
-        
-    }, [])
+        let timer
+        if (isSendButtonDisabled) {
+            timer = setInterval(() => {
+                setCountdown((prevCountdown) => prevCountdown - 1);
+            }, 1000);
+  
+            setTimeout(() => {
+                setIsSendButtonDisabled(false);
+                clearInterval(timer);
+            }, 60000);
+        }
+
+        return () => {
+            clearInterval(timer);
+          };
+    }, [isSendButtonDisabled]);
 
     const signup = async (e) => {
         e.preventDefault();
@@ -42,52 +58,23 @@ function Signup(props) {
         }
     };
 
-    const CountdownButton = () => {
-        const [isDisabled, setIsDisabled] = useState(false);
-        const [countdown, setCountdown] = useState(60);
-      
-        const handleClick = async (e) => {
-            e.preventDefault()
-            try {
-                const response = await axios.post(`http://${SERVER_URL}/api/signup-send-email`, {
-                    email: email
-                })
-            } catch (error) {
-                if (error.response && error.response.data && error.response.data.message) {
-                    setErrorMessage(error.response.data.message);
-                } else {
-                    setErrorMessage('Something went wrong. Please try again.');
-                }
+    const sendVerificationEmail = async (e) => {
+        e.preventDefault()
+        try {
+            const response = await axios.post(`http://${SERVER_URL}/api/signup-send-email`, {
+                email: email
+            })
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                setErrorMessage(error.response.data.message);
+            } else {
+                setErrorMessage('Something went wrong. Please try again.');
             }
-            setIsDisabled(true);
-            setCountdown(60);
-            setIsVerificationCodeInputDisabled(false)
-        };
-      
-        useEffect(() => {
-            let timer
-            if (isDisabled) {
-                timer = setInterval(() => {
-                    setCountdown((prevCountdown) => prevCountdown - 1);
-                }, 1000);
-      
-                setTimeout(() => {
-                    setIsDisabled(false);
-                    clearInterval(timer);
-                }, 60000);
-            }
-
-            return () => {
-                clearInterval(timer);
-              };
-        }, [isDisabled]);
-      
-        return (
-            <button id="send-code" className="button button-1" style={isDisabled ? {pointerEvents: 'none', color: '#D9D9D9', border: '1px solid #D9D9D9'} : {}} onClick={e => handleClick(e)} disabled={isDisabled}>
-                <p>{isDisabled ? `${countdown}s` : 'Send'}</p>
-            </button>
-        );
-    }
+        }
+        setIsSendButtonDisabled(true);
+        setCountdown(60);
+        setIsVerificationCodeInputDisabled(false)
+    };
 
     return (
         <div>
@@ -154,7 +141,9 @@ function Signup(props) {
                         />
                     </div>
                     <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                        <CountdownButton />
+                        <button id="send-code" className="button button-1" style={isSendButtonDisabled ? {pointerEvents: 'none', color: '#D9D9D9', border: '1px solid #D9D9D9'} : {}} onClick={e => sendVerificationEmail(e)} disabled={isSendButtonDisabled}>
+                            <p>{isSendButtonDisabled ? `${countdown}s` : 'Send'}</p>
+                        </button>
                         <button type="submit" id='submit-code' className="button" style={{margin: '6vh 0', width: '100px', display: 'flex', justifyContent: 'center' }}><p>Submit</p></button>
                     </div>
                 </form>
