@@ -29,7 +29,6 @@ function Login(props) {
             if (response.statusText === 'OK') {
                 setErrorMessage('')
                 setStatus('email-verification')
-                console.log(2)
             }
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
