@@ -18,6 +18,9 @@
   --dl-color-gray-black60: #00000099;
   --dl-color-gray-black80: #000000cc;
   --dl-color-pallet-green: #dfe7ddff;
+  --green-light: rgb(167, 190, 160);
+  --green-medium: rgb(150, 171, 144);
+  --green-deep: rgb(129, 148, 124);
   --dl-color-scheme-white: #FFFFFF;
   --dl-size-size-maxwidth: 1328px;
   --dl-color-pallet-yellow: #efc14cff;
