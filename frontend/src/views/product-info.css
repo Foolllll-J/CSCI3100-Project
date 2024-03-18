@@ -620,8 +620,6 @@
     margin-bottom: 20px;
 }
 
-.product-info-number {
-    width: 100px;
-    border-top: 1px solid var(--dl-color-gray-black50);
-    border-bottom: 1px solid var(--dl-color-gray-black50);
+.product-info-set-number {
+    z-index: 90;
 }

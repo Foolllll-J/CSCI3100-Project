@@ -35,7 +35,7 @@ const ShoppingCartItem = () => {
     return (
         <div className="shopping-cart-container05">
             <div className='shopping-cart-up'>
-                
+                <div className='shopping-cart-checkbox'></div>
                 <button type="button" className="shopping-cart-button">
                     Remove
                 </button>
@@ -61,7 +61,7 @@ const ShoppingCartItem = () => {
                     </div>
                     <div className="shopping-cart-container12">
                         <button className='button' onClick={numberDecrement} style={{width: '50px', display: 'flex', justifyContent: 'center'}}><span>-</span></button>
-                        <input type='text' value={number} onChange={e => handleInput(e)} style={{width: '70px', height: '40px', borderTop: '1px solid black', borderBottom: '1px solid black', textAlign: 'center'}} />
+                        <input type='text' value={number} onChange={e => handleInput(e)} style={{width: '70px', height: '40px', borderTop: '0.5px solid var(--dl-color-gray-black80)', borderBottom: '0.5px solid var(--dl-color-gray-black80)', textAlign: 'center'}} />
                         <button className='button' onClick={numberIncrement} style={{width: '50px', display: 'flex', justifyContent: 'center' }}><span>+</span></button>
                     </div>
                 </div>

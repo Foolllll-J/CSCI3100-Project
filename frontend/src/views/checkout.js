@@ -120,8 +120,7 @@ const Checkout = (props) => {
                       <h1 className="checkout-text13 Heading-2">Payment</h1>
                       <div className="checkout-container28">
                         <span>
-                          这里要做一个选择VISA 或 MasterCard
-                          ，还没做，支付系统只做了VISA
+                          
                         </span>
                       </div>
                     </div>

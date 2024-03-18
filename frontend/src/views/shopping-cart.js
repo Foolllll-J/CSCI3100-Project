@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Link } from 'react-router-dom'
 import ShoppingCartItem from '../components/shopping-cart-item-card'
 
@@ -12,6 +12,16 @@ import './shopping-cart.css'
  */
 
 const ShoppingCart = (props) => {
+    const [selectStatusText, setSelectStatusText] = useState('Select All')
+
+    const selectAll = () => {
+        if (selectStatusText === 'Select All') {
+            setSelectStatusText('Unselect All')
+        } else {
+            setSelectStatusText('Select All')
+        }
+    }
+
   return (
     <div className="shopping-cart-container">
       <div className="shopping-cart-main">
@@ -19,6 +29,14 @@ const ShoppingCart = (props) => {
         <div className="shopping-cart-container03">
           <div className="shopping-cart-container04">
             <h1 className="shopping-cart-text12 Heading-2">CART</h1>
+            <div className='shopping-cart-up' style={{border: '1px solid var(--dl-color-gray-900)', width: '55vw', minWidth: '500px', marginBottom: '15px'}}>
+                <button type="button" onClick={selectAll} className='shopping-cart-button' style={{position: 'absolute', left: '15px', top: '50%', transform: 'translate(0, -50%)', width: '100px', alignSelf: 'flex-start', textAlign: 'left'}}>
+                    {selectStatusText}
+                </button>
+                <button type="button" className="shopping-cart-button">
+                    Remove Selected Items
+                </button>
+            </div>
             <div className='shopping-cart-item-list-container'>
                 <ShoppingCartItem />
                 <ShoppingCartItem />

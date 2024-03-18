@@ -389,10 +389,17 @@
   flex-direction: column;
   justify-content: flex-start;
 }
+.shopping-cart-checkbox {
+    width: 20px;
+    height: 20px;
+    margin-top: 14.5px;
+    transform: translate(100%, 0);
+    border: 1px solid var(--dl-color-gray-900);
+}
 .shopping-cart-button {
-  right: 0px;
+  right: 15px;
   top: 50%;
-  transform: translate(-30%, -50%);
+  transform: translate(0, -50%);
   position: absolute;
   align-self: flex-end;
   color: rgb(167, 190, 160);

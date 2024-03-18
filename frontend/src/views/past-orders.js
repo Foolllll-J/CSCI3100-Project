@@ -22,9 +22,6 @@ const PastOrders = (props) => {
             </span>
           </div>
         </div>
-        <div className="past-orders-container03">
-          <span>这里应该放过往已经下单了的订单</span>
-        </div>
         <div className="past-orders-container04">
           <div className="past-orders-container05">
             <span className="past-orders-text15">过往订单1</span>

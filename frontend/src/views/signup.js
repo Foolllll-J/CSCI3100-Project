@@ -40,6 +40,7 @@ function Signup(props) {
         e.preventDefault();
         try {
             const response = await axios.post(`http://${SERVER_URL}/api/signup`, {
+                email: email,
                 userName: userName,
                 password: password,
                 verificationCode: verificationCode

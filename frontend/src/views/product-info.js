@@ -1,9 +1,39 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Link } from 'react-router-dom'
 
 import './product-info.css'
 
+
 const ProductInfo = (props) => {
+    const [number, setNumber] = useState('0')
+
+    const handleInput = (e) => {
+        const inputValue = e.target.value;
+        const regex = /^[0-9\b]+$/
+        
+        if (inputValue === '' || regex.test(inputValue)) {
+            setNumber(inputValue);
+        }
+    }
+
+    const numberIncrement = () => {
+        const parsedNumber = parseInt(number);
+        if (isNaN(parsedNumber)) {
+            setNumber('0');
+        } else {
+            setNumber(String(parsedNumber + 1));
+        }
+    }
+
+    const numberDecrement = () => {
+        const parsedNumber = parseInt(number);
+        if (isNaN(parsedNumber) || parsedNumber <= 0) {
+            setNumber('0');
+        } else {
+            setNumber(String(parsedNumber - 1));
+        }
+    }
+    
   return (
     <div className="product-info-container">
       <div className="product-info-main">
@@ -23,15 +53,11 @@ const ProductInfo = (props) => {
                   <h3 className="Headline3">商品名</h3>
                   <span className="product-info-text13">商品价格</span>
                 </div>
-                <div className='product-info-set-number'>
-                    <button className='button' style={{width: '60px', textAlign: 'center'}}>
-                        <span>--</span>
-                    </button>
-                    <input className='product-info-number'></input>
-                    <button className='button' style={{width: '60px', textAlign: 'center'}}>
-                        <span>+</span>
-                    </button>
-                </div>
+                <div className="product-info-set-number">
+                        <button className='button' onClick={numberDecrement} style={{width: '50px', display: 'flex', justifyContent: 'center'}}><span>-</span></button>
+                        <input type='text' value={number} onChange={e => handleInput(e)} style={{width: '70px', height: '40px', borderTop: '0.5px solid var(--dl-color-gray-black80)', borderBottom: '0.5px solid var(--dl-color-gray-black80)', textAlign: 'center'}} />
+                        <button className='button' onClick={numberIncrement} style={{width: '50px', display: 'flex', justifyContent: 'center' }}><span>+</span></button>
+                    </div>
                 <button
                   className="product-info-navlink2 button"
                 >
