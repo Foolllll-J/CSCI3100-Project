@@ -1,6 +1,7 @@
 # Object Properties and APIs Needed  
 ## Object Properties  
-1. User:  
+1. User:
+* ```isAdmin```: boolean
 * ```email```: string, unique  
 * ```password```: string  
 * ```userName```: string, unique  
