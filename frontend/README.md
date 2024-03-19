@@ -22,7 +22,7 @@
 * ```productPrice```: number  
 * ```productDescription```: string  
 * ```productImage```: string  
-* ```productTag```: string  
+* ```productTag```: array, a list of string tags  
 
 3. Order:  
 * ```orderID```: string, unique
