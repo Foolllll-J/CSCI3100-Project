@@ -2,7 +2,8 @@ import React, {useState, useEffect} from 'react'
 
 import '../views/shopping-cart.css'
 
-const ShoppingCartItem = () => {
+const ShoppingCartItem = (props) => {
+    const [itemObj, setItemObj] = useState(props.item)
     const [number, setNumber] = useState('0')
 
     const handleInput = (e) => {
@@ -44,19 +45,20 @@ const ShoppingCartItem = () => {
                 <div className="shopping-cart-container06">
                     <div className="shopping-cart-container07">
                     <img
-                        alt="image"
-                        src="https://play.teleporthq.io/static/svg/default-img.svg"
+                        alt={item.product.productImage}
+                        src={item.product.productImage}
+                        //src="https://play.teleporthq.io/static/svg/default-img.svg"
                         className="shopping-cart-image4"
                     />
                     </div>
                 </div>
                 <div className="shopping-cart-container08">
                     <div className="shopping-cart-text14">
-                        <span style={{wordWrap: 'break-word'}}>此处是商品名</span>
+                        <span style={{wordWrap: 'break-word'}}>{item.product.productName}</span>
                     </div>
                     <div className="shopping-cart-container10">
                         <div className="shopping-cart-container11">
-                        <span className="shopping-cart-text15">111HKD</span>
+                        <span className="shopping-cart-text15">{item.product.productPrice} HKD</span>
                         </div>
                     </div>
                     <div className="shopping-cart-container12">

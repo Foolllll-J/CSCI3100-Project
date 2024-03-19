@@ -1091,3 +1091,8 @@
     margin-right: var(--dl-space-space-unit);
   }
 }
+
+.navbar-button {
+    cursor: pointer;
+}
+

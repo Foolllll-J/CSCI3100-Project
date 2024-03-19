@@ -46,8 +46,8 @@ function Signup(props) {
                 verificationCode: verificationCode
             });
             const { user, userToken } = response.data;
-            props.onVerification(user)
-            localStorage.setItem('userToken', JSON.stringify(userToken))
+            props.updateUser(user)
+            props.updateUserToken(userToken)
             history.push('/');
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {

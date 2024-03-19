@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import ReactDOM from 'react-dom'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import {
   BrowserRouter as Router,
   Route,
@@ -22,15 +22,57 @@ import Home from './views/home'
 import NotFound from './views/not-found'
 import Login from './views/login'
 import Signup from './views/signup'
+import axios from 'axios'
+
+const SERVER_URL = 'localhost:5000'
 
 const App = () => {
+    const history = useHistory();
+
     const [user, setUser] = useState({})
     const [userToken, setUserToken] = useState('')
 
-    const setUserAfterLogin = (user) => {
+    const updateUser = (user) => {
         localStorage.setItem('user', JSON.stringify(user))
         setUser(user)
-        console.log(user)
+    }
+
+    const updateUserToken = (userToken) => {
+        localStorage.setItem('userToken', JSON.stringify(userToken))
+        setUserToken(userToken)
+    }
+
+    const verifyUserToken = async (userToken) => {
+        try {
+            const response = await axios.post(`http://${SERVER_URL}/api/verify-user-token`, {
+                userToken: userToken
+            })
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.message === 'Expired or wrong user token') {
+                localStorage.removeItem('user')
+                localStorage.removeItem('userToken')
+                setUser({})
+                window.location.href = '/login'
+            } else if (error.response && error.response.data && error.response.data.message) {
+                console.log(error.response.data.message);
+            }
+        }
+    }
+
+    async function logout() {
+        try {
+            const response = await axios.post(`http://${SERVER_URL}/api/logout`, {
+                userToken: userToken
+            })
+            localStorage.removeItem('user')
+            localStorage.removeItem('userToken')
+            setUser({})
+            window.location.href = '/'
+        } catch(error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                console.log(error.response.data.message);
+            }
+        }
     }
 
     useEffect(() => {
@@ -45,7 +87,6 @@ const App = () => {
             const user = JSON.parse(storedUser);
             setUser(user)
         }
-
     }, [])
 
     return (
@@ -80,13 +121,17 @@ const App = () => {
                                     className="home-image2"
                                 />
                             </Link>
-                            <Link to="/login" className="home-navlink01">
-                                <img
-                                    alt="AccountCircle3271301"
-                                    src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMjQnIGhlaWdodD0nMjQnIHZpZXdCb3g9JzAgMCAyNCAyNCcgZmlsbD0nbm9uZScgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz4KPHBhdGggZD0nTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyQzIgMTcuNTIgNi40OCAyMiAxMiAyMkMxNy41MiAyMiAyMiAxNy41MiAyMiAxMkMyMiA2LjQ4IDE3LjUyIDIgMTIgMlpNMTIgNUMxMy42NiA1IDE1IDYuMzQgMTUgOEMxNSA5LjY2IDEzLjY2IDExIDEyIDExQzEwLjM0IDExIDkgOS42NiA5IDhDOSA2LjM0IDEwLjM0IDUgMTIgNVpNMTIgMTkuMkM5LjUgMTkuMiA3LjI5IDE3LjkyIDYgMTUuOThDNi4wMyAxMy45OSAxMCAxMi45IDEyIDEyLjlDMTMuOTkgMTIuOSAxNy45NyAxMy45OSAxOCAxNS45OEMxNi43MSAxNy45MiAxNC41IDE5LjIgMTIgMTkuMlonIGZpbGw9JyMxNjE2MTYnLz4KPC9zdmc+Cg=="
-                                    className="home-image3"
-                                />
-                            </Link>
+                            { user && user.userName ? (
+                                <div className="home-navlink01 navbar-button" onClick={logout}>
+                                    <svg t="1710857797384" className="home-image3" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6469" width="200" height="200"><path d="M950.71 521.786L757.935 329.011c-11.019-11.019-29.861-3.215-29.861 12.369v115.928H412.098c-28.821 0-52.188 32.546-52.188 72.687s23.367 72.687 52.188 72.687h315.977V726.93c0 15.584 18.841 23.388 29.861 12.369L950.71 546.523c6.831-6.831 6.831-17.906 0-24.737z" p-id="6470" fill="#161616"></path><path d="M547.856 799.32H183.095l0.168-574.639h364.593v201.124h114.928V224.68c0-63.37-51.558-114.928-114.928-114.928H183.095c-63.37 0-114.928 51.558-114.928 114.928v574.64c0 63.37 51.558 114.928 114.928 114.928h364.761c63.37 0 114.928-51.558 114.928-114.928V634.184H547.856V799.32zM183.081 224.68l0.014-57.464v57.464h-0.014z" p-id="6471" fill="#161616"></path></svg>
+                                </div>
+                            ) : (<Link to="/login" className="home-navlink01">
+                            <img
+                                alt="AccountCircle3271301"
+                                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMjQnIGhlaWdodD0nMjQnIHZpZXdCb3g9JzAgMCAyNCAyNCcgZmlsbD0nbm9uZScgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz4KPHBhdGggZD0nTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyQzIgMTcuNTIgNi40OCAyMiAxMiAyMkMxNy41MiAyMiAyMiAxNy41MiAyMiAxMkMyMiA2LjQ4IDE3LjUyIDIgMTIgMlpNMTIgNUMxMy42NiA1IDE1IDYuMzQgMTUgOEMxNSA5LjY2IDEzLjY2IDExIDEyIDExQzEwLjM0IDExIDkgOS42NiA5IDhDOSA2LjM0IDEwLjM0IDUgMTIgNVpNMTIgMTkuMkM5LjUgMTkuMiA3LjI5IDE3LjkyIDYgMTUuOThDNi4wMyAxMy45OSAxMCAxMi45IDEyIDEyLjlDMTMuOTkgMTIuOSAxNy45NyAxMy45OSAxOCAxNS45OEMxNi43MSAxNy45MiAxNC41IDE5LjIgMTIgMTkuMlonIGZpbGw9JyMxNjE2MTYnLz4KPC9zdmc+Cg=="
+                                className="home-image3"
+                            />
+                        </Link>)}
                         </div>
                     </div>
                     <div data-role="BurgerMenu" className="home-burger-menu">
@@ -97,18 +142,54 @@ const App = () => {
                 </header>
             </div>
         <Switch>
-            <Route component={ProductInfo} exact path="/product-info" />
-            <Route component={Checkout} exact path="/checkout" />
-            <Route component={PastOrders} exact path="/past-orders" />
-            <Route component={Search} exact path="/search" />
-            <Route component={TrackOrder} exact path="/track-order" />
-            <Route component={PaymentSystem} exact path="/payment-system" />
-            <Route component={PaymentSuccess} exact path="/payment-success" />
-            <Route component={ShoppingCart} exact path="/shopping-cart" />
-            <Route component={ReviewAndRating} exact path="/review-and-rating" />
-            <Route component={Home} exact path="/" />
-            <Route exact path='/login' render={(props) => <Login {...props} onVerification={setUserAfterLogin} />} />
-            <Route exact path='/signup' render={(props) => <Signup {...props} onVerification={setUserAfterLogin} />} />
+            <Route exact path="/product-info" render={(props) => <ProductInfo {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/checkout" render={(props) => <Checkout {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/past-orders" render={(props) => <PastOrders {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/search" render={(props) => <Search {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/track-order" render={(props) => <TrackOrder {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/payment-system" render={(props) => <PaymentSystem {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/payment-success" render={(props) => <PaymentSuccess {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/shopping-cart" render={(props) => <ShoppingCart {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/review-and-rating" render={(props) => <ReviewAndRating {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/" component={Home} />
+            <Route
+            exact
+            path='/login'
+            render={(props) => {
+                if (!(user && user.userName && userToken !== '')) {
+                return (
+                    <Login
+                        {...props}
+                        user={user}
+                        updateUser={updateUser}
+                        userToken={userToken}
+                        updateUserToken={updateUserToken} verifyUserToken={verifyUserToken}
+                    />
+                );
+                } else {
+                    return <Redirect to="/" />;
+                }
+            }}
+            />     
+            <Route
+            exact
+            path='/signup'
+            render={(props) => {
+                if (!(user && user.userName && userToken !== '')) {
+                return (
+                    <Signup
+                        {...props}
+                        user={user}
+                        updateUser={updateUser}
+                        userToken={userToken}
+                        updateUserToken={updateUserToken} verifyUserToken={verifyUserToken}
+                    />
+                );
+                } else {
+                    return <Redirect to="/" />;
+                }
+            }}
+            />             
             <Route component={NotFound} path="**" />
             <Redirect to="**" />
         </Switch>
