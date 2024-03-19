@@ -159,10 +159,25 @@ res.status(500).json({ message: 'Failed to log out. Please submit a valid user t
 ### 用户操作
 对于下文涉及的所有需要提交userToken的函数，以及上文的logout函数，请遵循以下原则：  
 * 如果userToken信息正确且未过期，正常执行对应部分的功能
-* 如果userToken信息不正确或已过期，则直接返回一个res.status(400).json({ message: 'Expired or wrong user token' });
+* 如果userToken信息不正确或已过期，则直接返回一个```res.status(400).json({ message: 'Expired or wrong user token' })```，若过期则在服务器端将对应user的isActive属性设置为false
 * 下文中不再单独列出userToken信息不正确或已过期的返回值
 
-1. 添加/修改/删除购物车商品：  
+1. 进入一个页面时验证userToken：  
+req:  
+```
+post('/api/verify-user-token', {
+  userToken
+})
+```
+
+验证成功的res:
+```
+res.status(200)
+```
+
+验证失败的res见上  
+
+2. 添加/修改/删除购物车商品：  
 req:
 ```
 post('/api/update-cart', {
