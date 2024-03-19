@@ -2,6 +2,7 @@
 ## Object Properties  
 1. User:
 * ```isAdmin```: boolean
+* ```isActive```: boolean
 * ```email```: string, unique  
 * ```password```: string  
 * ```userName```: string, unique  
