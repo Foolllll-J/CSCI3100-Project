@@ -8,7 +8,7 @@
 * ```userName```: string, unique  
 * ```shoppingCartInfo```: array  
     - element: object  
-    - ```product```: object, shown below
+    - ```productID```: string
     - ```quantity```: number  
 * ```orderHistory```: object  
     - ```orderList```: array  
