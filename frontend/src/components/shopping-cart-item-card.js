@@ -45,8 +45,8 @@ const ShoppingCartItem = (props) => {
                 <div className="shopping-cart-container06">
                     <div className="shopping-cart-container07">
                     <img
-                        alt={item.product.productImage}
-                        src={item.product.productImage}
+                        alt={itemObj.product.productImage}
+                        src={itemObj.product.productImage}
                         //src="https://play.teleporthq.io/static/svg/default-img.svg"
                         className="shopping-cart-image4"
                     />
@@ -54,11 +54,11 @@ const ShoppingCartItem = (props) => {
                 </div>
                 <div className="shopping-cart-container08">
                     <div className="shopping-cart-text14">
-                        <span style={{wordWrap: 'break-word'}}>{item.product.productName}</span>
+                        <span style={{wordWrap: 'break-word'}}>{itemObj.product.productName}</span>
                     </div>
                     <div className="shopping-cart-container10">
                         <div className="shopping-cart-container11">
-                        <span className="shopping-cart-text15">{item.product.productPrice} HKD</span>
+                        <span className="shopping-cart-text15">{itemObj.product.productPrice} HKD</span>
                         </div>
                     </div>
                     <div className="shopping-cart-container12">
