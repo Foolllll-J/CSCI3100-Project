@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import { Link } from 'react-router-dom'
-import { v4 as uuidv4 } from 'uuid';
 import ShoppingCartItem from '../components/shopping-cart-item-card'
 
 import './shopping-cart.css'
+import axios from 'axios'
 
 /**
  * Todo:
@@ -15,21 +15,97 @@ import './shopping-cart.css'
 const ShoppingCart = (props) => {
     const [selectStatusText, setSelectStatusText] = useState('Select All')
     const [itemList, setItemList] = useState([])
+    const [selectedItems, setSelectedItems] = useState([]);
+
+    const fetchShoppingCartItems = async (shoppingCartInfo, userToken) => {
+        try {
+            const response = await axios.post(`http://${props.SERVER_URL}/api/fetch-shopping-cart-items`, {
+                shoppingCartInfo: shoppingCartInfo,
+                userToken: userToken
+            })
+            const items = response.data.shoppingCartItems
+            setItemList(items)
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                console.log(error.response.data.message)
+            } else {
+                console.log('Some error occurs. Please try again later.')
+            }
+        }
+    }
 
     useEffect(() => {
-        props.verifyUserToken(props.userToken)
+        const verifyToken = async () => {
+            try {
+                const userToken = await props.getUserAndToken();
+                await props.verifyUserToken(userToken);
+                await fetchShoppingCartItems(props.user.shoppingCartInfo, props.userToken);
+            } catch (error) {
+                if (error.message === 'User token not found') {
+                    props.updateUser({})
+                    props.updateUserToken('')
+                    window.location.href = '/login'
+                } else {
+                    Alert('Error:', error.message);
+                }
+            }
+        };
+    
+        verifyToken();
     }, [])
 
     useEffect(() => {
-        setItemList(props.user.shoppingCartInfo)
+        const updateFetch = async () => {
+            await fetchShoppingCartItems(props.user.shoppingCartInfo, props.userToken);
+        }
+        updateFetch()
     }, [props.user.shoppingCartInfo]);
+    
+    const onSelected = (itemId) => {
+        const isSelected = selectedItems.includes(itemId);
+        let updatedSelectedItems
+        if (isSelected) {
+            updatedSelectedItems = selectedItems.filter((item) => item !== itemId);
+            setSelectedItems(updatedSelectedItems);
+        } else {
+            updatedSelectedItems = [...selectedItems, itemId]
+            setSelectedItems(updatedSelectedItems);
+        }
+
+        const allItemsSelected = itemList.every((item) => updatedSelectedItems.includes(item.product.productID));
+        setSelectStatusText(allItemsSelected ? 'Unselect All' : 'Select All');
+    };
 
     const selectAll = () => {
         if (selectStatusText === 'Select All') {
-            setSelectStatusText('Unselect All')
+            setSelectStatusText('Unselect All');
+            const allItemIds = itemList.map((item) => item.product.productID);
+            setSelectedItems(allItemIds);
         } else {
-            setSelectStatusText('Select All')
+            setSelectStatusText('Select All');
+            setSelectedItems([]);
         }
+    };
+
+    const removeItems = async (itemArray) => {
+        const shoppingCartInfo = [...props.user.shoppingCartInfo]
+        const shoppingCartInfoToUpdate = shoppingCartInfo.filter((item) => !itemArray.includes(item.productID))
+        try {
+            const response = await axios.post(`http://${props.SERVER_URL}/api/update-shopping-cart`, {
+                newCartContent: shoppingCartInfoToUpdate,
+                userToken: props.userToken
+            })
+            const updatedUser = {...props.user}
+            updatedUser.shoppingCartInfo = response.data.updatedCartContent
+            props.updateUser(updatedUser)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const removeSelectedItems = async () => {
+        await removeItems(selectedItems)
+        setSelectedItems([])
     }
 
   return (
@@ -43,7 +119,11 @@ const ShoppingCart = (props) => {
                 <button type="button" onClick={selectAll} className='shopping-cart-button' style={{position: 'absolute', left: '15px', top: '50%', transform: 'translate(0, -50%)', width: '100px', alignSelf: 'flex-start', textAlign: 'left'}}>
                     {selectStatusText}
                 </button>
-                <button type="button" className="shopping-cart-button">
+                <button
+                    type="button"
+                    className={selectedItems.length === 0 ? "shopping-cart-button-disabled" : "shopping-cart-button"}
+                    onClick={removeSelectedItems}
+                    disabled={selectedItems.length === 0 ? true : false}>
                     Remove Selected Items
                 </button>
             </div>) : (undefined)}
@@ -52,7 +132,7 @@ const ShoppingCart = (props) => {
                     const itemId = item.product.productID
                     return (
                         <div id={`item-${itemId}`} key={itemId} className="list-group list-group-horizontal-lg margin-bot">
-                            <ShoppingCartItem item={item} />
+                            <ShoppingCartItem item={item} isSelected={selectedItems.includes(itemId)} onSelected={() => onSelected(itemId)} onRemove={() => removeItems([itemId])} />
                         </div>
                     )
                 })) : (<div>No item in cart</div>)}

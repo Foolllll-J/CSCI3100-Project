@@ -5,6 +5,9 @@ import '../views/shopping-cart.css'
 const ShoppingCartItem = (props) => {
     const [itemObj, setItemObj] = useState(props.item)
     const [number, setNumber] = useState('0')
+    const [isSelected, setIsSelected] = useState(props.isSelected)
+
+    
 
     const handleInput = (e) => {
         const inputValue = e.target.value;
@@ -33,11 +36,20 @@ const ShoppingCartItem = (props) => {
         }
     }
 
+    useEffect(() => {
+        setIsSelected(props.isSelected)
+    }, [props.isSelected])
+
     return (
         <div className="shopping-cart-container05">
             <div className='shopping-cart-up'>
-                <div className='shopping-cart-checkbox'></div>
-                <button type="button" className="shopping-cart-button">
+                <div
+                    onClick={props.onSelected}
+                    className= 'shopping-cart-checkbox checkbox-selected'
+                >
+                    {isSelected ? <svg t="1710938861964" style={{width: '16px', height: '16px', left: '1px', top: '0px', position: 'relative'}} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7600" width="200" height="200"><path d="M369.792 704.32L930.304 128 1024 223.616 369.984 896l-20.288-20.864-0.128 0.128L0 516.8 96.128 423.68l273.664 280.64z" p-id="7601"></path></svg> : undefined}
+                </div>
+                <button type="button" className="shopping-cart-button" onClick={props.onRemove}>
                     Remove
                 </button>
             </div>

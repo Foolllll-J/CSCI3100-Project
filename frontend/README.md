@@ -177,19 +177,60 @@ res.status(200)
 
 验证失败的res见上  
 
-2. 添加/修改/删除购物车商品：  
+2. 获取购物车中商品的详细信息  
+由于user.shoppingCartInfo中储存的商品信息仅包括商品id和数量，所以在访问购物车页面时，需要通过商品id获取商品详细信息：  
+req:  
+```
+post('/api/fetch-shopping-cart-items', {
+    shoppingCartInfo,
+    userToken
+})
+```
+
+res:
+```
+{
+  shoppingCartItems: array
+}
+```
+其中，```shoppingCartItems```是一个array，这个array中的每一个元素都和req中shoppingCartInfo的元素一一对应，对应形式为：  
+req中shoppingCartInfo的一个元素：
+```
+{
+    productID,
+    quantity
+}
+```
+对应  
+res中shoppingCartItem的一个元素：  
+```
+{
+    product: {
+        productID,
+        productName: 这个productID所对应商品的productName，下面的price、description、image、tag依此类推,
+        productPrice,
+        productDescription,
+        productImage,
+        productTag
+    },
+    quantity: quantity
+}
+```
+
+3. 添加/修改/删除购物车商品：  
 req:
 ```
-post('/api/update-cart', {
+post('/api/update-shopping-cart', {
   newCartContent: 一个array，形式等同于user.shoppingCartInfo,
   userToken
 })
 ```
 
+收到请求后，在服务器端找到该userToken对应的user，然后将该user的shoppingCartInfo更新为newCartContent
 购物车信息更新成功的res:
 ```
 {
-  updatedCartContent: 一个array，形式等同于user.shoppingCartInfo
+  updatedCartContent: 一个array，内容和req中的newCartContent相同
 }
 ```
 

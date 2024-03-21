@@ -42,6 +42,23 @@ const App = () => {
         setUserToken(userToken)
     }
 
+    const getUserAndToken = () => {
+        return new Promise((resolve, reject) => {
+            const storedUserToken = localStorage.getItem('userToken');
+            const storedUser = localStorage.getItem('user');
+            if (storedUserToken && storedUserToken !== undefined && storedUserToken !== 'undefined') {
+                const userToken = JSON.parse(storedUserToken);
+                setUserToken(userToken);
+                if (storedUser && storedUser !== undefined && storedUser !== 'undefined') {
+                    const user = JSON.parse(storedUser);
+                    setUser(user)
+                }
+                resolve(userToken);
+            }
+            reject(new Error('User token not found'));
+        });
+    }
+
     const verifyUserToken = async (userToken) => {
         try {
             const response = await axios.post(`http://${SERVER_URL}/api/verify-user-token`, {
@@ -52,9 +69,13 @@ const App = () => {
                 localStorage.removeItem('user')
                 localStorage.removeItem('userToken')
                 setUser({})
+                setUserToken('')
                 window.location.href = '/login'
+                alert('Your login has been expired. Please log in again.')
             } else if (error.response && error.response.data && error.response.data.message) {
-                console.log(error.response.data.message);
+                alert(error.response.data.message);
+            } else {
+                alert('Some error occurs. Please try again later.')
             }
         }
     }
@@ -76,18 +97,22 @@ const App = () => {
     }
 
     useEffect(() => {
-        const storedUserToken = localStorage.getItem('userToken');
-        if (storedUserToken && storedUserToken !== undefined && storedUserToken !== 'undefined') {
-            const userToken = JSON.parse(storedUserToken);
-            setUserToken(userToken)
-        }
-
-        const storedUser = localStorage.getItem('user');
-        if (storedUser && storedUser !== undefined && storedUser !== 'undefined') {
-            const user = JSON.parse(storedUser);
-            setUser(user)
-        }
-    }, [])
+        const fetchToken = async () => {
+            try {
+                await getUserAndToken();
+            } catch (error) {
+                if (error.message === 'User token not found') {
+                    updateUser({});
+                    updateUserToken('');
+                    window.location.href = '/login';
+                } else {
+                    console.log('Error:', error.message);
+                }
+            }
+        };
+      
+        fetchToken();
+    }, []);
 
     return (
         <Router>
@@ -142,15 +167,15 @@ const App = () => {
                 </header>
             </div>
         <Switch>
-            <Route exact path="/product-info" render={(props) => <ProductInfo {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/checkout" render={(props) => <Checkout {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/past-orders" render={(props) => <PastOrders {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/search" render={(props) => <Search {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/track-order" render={(props) => <TrackOrder {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/payment-system" render={(props) => <PaymentSystem {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/payment-success" render={(props) => <PaymentSuccess {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/shopping-cart" render={(props) => <ShoppingCart {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/review-and-rating" render={(props) => <ReviewAndRating {...props} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/product-info" render={(props) => <ProductInfo {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/checkout" render={(props) => <Checkout {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/past-orders" render={(props) => <PastOrders {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/search" render={(props) => <Search {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/track-order" render={(props) => <TrackOrder {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/payment-system" render={(props) => <PaymentSystem {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/payment-success" render={(props) => <PaymentSuccess {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/shopping-cart" render={(props) => <ShoppingCart {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
+            <Route exact path="/review-and-rating" render={(props) => <ReviewAndRating {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
             <Route exact path="/" component={Home} />
             <Route
             exact
@@ -160,10 +185,12 @@ const App = () => {
                 return (
                     <Login
                         {...props}
+                        SERVER_URL={SERVER_URL}
                         user={user}
                         updateUser={updateUser}
                         userToken={userToken}
-                        updateUserToken={updateUserToken} verifyUserToken={verifyUserToken}
+                        updateUserToken={updateUserToken}
+                        getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken}
                     />
                 );
                 } else {
@@ -179,10 +206,12 @@ const App = () => {
                 return (
                     <Signup
                         {...props}
+                        SERVER_URL={SERVER_URL}
                         user={user}
                         updateUser={updateUser}
                         userToken={userToken}
-                        updateUserToken={updateUserToken} verifyUserToken={verifyUserToken}
+                        updateUserToken={updateUserToken}
+                        verifyUserToken={verifyUserToken}
                     />
                 );
                 } else {

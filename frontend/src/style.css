@@ -21,6 +21,8 @@
   --green-light: rgb(167, 190, 160);
   --green-medium: rgb(150, 171, 144);
   --green-deep: rgb(129, 148, 124);
+  --hover-grey: #F8F9FA;
+  --active-grey: #E9ECEF;
   --dl-color-scheme-white: #FFFFFF;
   --dl-size-size-maxwidth: 1328px;
   --dl-color-pallet-yellow: #efc14cff;

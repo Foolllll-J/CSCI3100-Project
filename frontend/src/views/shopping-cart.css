@@ -389,29 +389,6 @@
   flex-direction: column;
   justify-content: flex-start;
 }
-.shopping-cart-checkbox {
-    width: 20px;
-    height: 20px;
-    margin-top: 14.5px;
-    transform: translate(100%, 0);
-    border: 1px solid var(--dl-color-gray-900);
-}
-.shopping-cart-button {
-  right: 15px;
-  top: 50%;
-  transform: translate(0, -50%);
-  position: absolute;
-  align-self: flex-end;
-  color: rgb(167, 190, 160);
-}
-.shopping-cart-button:hover {
-    cursor: pointer;
-    color: rgb(150, 171, 144);
-}
-.shopping-cart-button:active {
-    cursor: pointer;
-    color: rgb(129, 148, 124);
-}
 .shopping-cart-container14 {
   flex: 0 0 auto;
  
@@ -711,6 +688,58 @@
   }
 }
 
-.shopping-cart-item-list-container {
-    
+.shopping-cart-button {
+    right: 15px;
+    top: 50%;
+    transform: translate(0, -50%);
+    position: absolute;
+    align-self: flex-end;
+    color: var(--green-light);
+}
+.shopping-cart-button:hover {
+    cursor: pointer;
+    color: var(--green-medium);
+}
+.shopping-cart-button:active {
+    cursor: pointer;
+    color: var(--green-deep);
+}
+
+.shopping-cart-button-disabled {
+    right: 15px;
+    top: 50%;
+    transform: translate(0, -50%);
+    position: absolute;
+    align-self: flex-end;
+    color: var(--dl-color-gray-900);
+}
+.shopping-cart-button-disabled:hover {
+    color: var(--dl-color-gray-900);
+    cursor: default;
+}
+
+.shopping-cart-checkbox {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    margin-top: 14.5px;
+    transform: translate(100%, 0);
+    border: 1px solid var(--dl-color-gray-900);
+    cursor: pointer;
+    background-color: white;
+}
+.shopping-cart-checkbox svg {
+    fill: var(--green-light);
+}
+.shopping-cart-checkbox svg:hover {
+    fill: var(--green-medium);
+}
+.shopping-cart-checkbox svg:active {
+    fill: var(--green-deep);
+}
+.shopping-cart-checkbox:hover {
+    background-color: var(--hover-grey);
+}
+.shopping-cart-checkbox:active {
+    background-color: var(--active-grey);
 }
