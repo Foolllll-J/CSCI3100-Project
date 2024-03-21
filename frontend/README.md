@@ -10,6 +10,7 @@
     - element: object  
     - ```productID```: string
     - ```quantity```: number  
+    - ```isSelected```: boolean, mark whether this item is selected in shopping cart
 * ```orderHistory```: object  
     - ```orderList```: array  
         + element: string - each element is an order ID  
