@@ -1,38 +1,64 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef } from 'react'
 
 import '../views/shopping-cart.css'
+import axios from 'axios'
 
 const ShoppingCartItem = (props) => {
     const [itemObj, setItemObj] = useState(props.item)
-    const [number, setNumber] = useState('0')
+    const [number, setNumber] = useState(props.user.shoppingCartInfo.find(item => item.productID === itemObj.product.productID).quantity)
     const [isSelected, setIsSelected] = useState(props.isSelected)
 
-    
+    const debounceTimerRef = useRef(null);
 
-    const handleInput = (e) => {
-        const inputValue = e.target.value;
-        const regex = /^[0-9\b]+$/
-        
+    const handleInput = async (e) => {
+        clearTimeout(debounceTimerRef.current);
+        let inputValue;
+        if (typeof e === 'number') {
+            inputValue = e;
+        } else {
+            inputValue = e.target.value;
+        }
+        const regex = /^[0-9\b]+$/;
+
         if (inputValue === '' || regex.test(inputValue)) {
+            let parsedValue = parseInt(inputValue)
+            if (parsedValue < 1) {
+                parsedValue = 1;
+            }
             setNumber(inputValue);
+            debounceTimerRef.current = setTimeout(async () => {
+                const shoppingCartInfo = [...props.user.shoppingCartInfo]
+                shoppingCartInfo.find(item => item.productID === itemObj.product.productID).quantity = parseInt(inputValue)
+                try {
+                    const response = await axios.post(`http://${props.SERVER_URL}/api/update-shopping-cart`, {
+                        newCartContent: shoppingCartInfo,
+                        userToken: props.userToken
+                    })
+                    const updatedUser = {...props.user}
+                    updatedUser.shoppingCartInfo = response.data.updatedCartContent
+                    props.updateUser(updatedUser)
+                } catch (error) {
+                    console.log(error)
+                }
+            }, 1000);
         }
-    }
+    };
 
-    const numberIncrement = () => {
-        const parsedNumber = parseInt(number);
+    const numberIncrement = (num) => {
+        const parsedNumber = parseInt(num);
         if (isNaN(parsedNumber)) {
-            setNumber('0');
+            handleInput({ target: { value: '1' } })
         } else {
-            setNumber(String(parsedNumber + 1));
+            handleInput({ target: { value: parsedNumber + 1 >= 1 ? String(parsedNumber + 1) : 1 } })
         }
     }
 
-    const numberDecrement = () => {
-        const parsedNumber = parseInt(number);
-        if (isNaN(parsedNumber) || parsedNumber <= 0) {
-            setNumber('0');
+    const numberDecrement = (num) => {
+        const parsedNumber = parseInt(num);
+        if (isNaN(parsedNumber)) {
+            handleInput({ target: { value: '1' } })
         } else {
-            setNumber(String(parsedNumber - 1));
+            handleInput({ target: { value: parsedNumber - 1 >= 1 ? String(parsedNumber - 1) : 1 } })
         }
     }
 
@@ -74,9 +100,9 @@ const ShoppingCartItem = (props) => {
                         </div>
                     </div>
                     <div className="shopping-cart-container12">
-                        <button className='button' onClick={numberDecrement} style={{width: '50px', display: 'flex', justifyContent: 'center'}}><span>-</span></button>
+                        <button className='button' onClick={() => numberDecrement(number)} style={{width: '50px', display: 'flex', justifyContent: 'center'}}><span>-</span></button>
                         <input type='text' value={number} onChange={e => handleInput(e)} style={{width: '70px', height: '40px', borderTop: '0.5px solid var(--dl-color-gray-black80)', borderBottom: '0.5px solid var(--dl-color-gray-black80)', textAlign: 'center'}} />
-                        <button className='button' onClick={numberIncrement} style={{width: '50px', display: 'flex', justifyContent: 'center' }}><span>+</span></button>
+                        <button className='button' onClick={() => numberIncrement(number)} style={{width: '50px', display: 'flex', justifyContent: 'center' }}><span>+</span></button>
                     </div>
                 </div>
             </div>

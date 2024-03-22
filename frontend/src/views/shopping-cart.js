@@ -15,7 +15,7 @@ import axios from 'axios'
 const ShoppingCart = (props) => {
     const [selectStatusText, setSelectStatusText] = useState('Select All')
     const [itemList, setItemList] = useState([])
-    const [selectedItems, setSelectedItems] = useState([]);
+    const [selectedItemIDList, setSelectedItemIDList] = useState([]);
 
     const fetchShoppingCartItems = async (shoppingCartInfo, userToken) => {
         try {
@@ -62,14 +62,14 @@ const ShoppingCart = (props) => {
     }, [props.user.shoppingCartInfo]);
     
     const onSelected = (itemId) => {
-        const isSelected = selectedItems.includes(itemId);
+        const isSelected = selectedItemIDList.includes(itemId);
         let updatedSelectedItems
         if (isSelected) {
-            updatedSelectedItems = selectedItems.filter((item) => item !== itemId);
-            setSelectedItems(updatedSelectedItems);
+            updatedSelectedItems = selectedItemIDList.filter((item) => item !== itemId);
+            setSelectedItemIDList(updatedSelectedItems);
         } else {
-            updatedSelectedItems = [...selectedItems, itemId]
-            setSelectedItems(updatedSelectedItems);
+            updatedSelectedItems = [...selectedItemIDList, itemId]
+            setSelectedItemIDList(updatedSelectedItems);
         }
 
         const allItemsSelected = itemList.every((item) => updatedSelectedItems.includes(item.product.productID));
@@ -80,10 +80,10 @@ const ShoppingCart = (props) => {
         if (selectStatusText === 'Select All') {
             setSelectStatusText('Unselect All');
             const allItemIds = itemList.map((item) => item.product.productID);
-            setSelectedItems(allItemIds);
+            setSelectedItemIDList(allItemIds);
         } else {
             setSelectStatusText('Select All');
-            setSelectedItems([]);
+            setSelectedItemIDList([]);
         }
     };
 
@@ -104,8 +104,18 @@ const ShoppingCart = (props) => {
     }
 
     const removeSelectedItems = async () => {
-        await removeItems(selectedItems)
-        setSelectedItems([])
+        await removeItems(selectedItemIDList)
+        setSelectedItemIDList([])
+    }
+
+    const totalValue = () => {
+        let total = 0
+        if (selectedItemIDList.length > 0) {
+            selectedItemIDList.map((itemID) => {
+                total += Number(itemList.filter((item) => item.product.productID === itemID)[0].product.productPrice) * Number(itemList.filter((item) => item.product.productID === itemID)[0].quantity)
+            })
+        }
+        return total
     }
 
   return (
@@ -121,9 +131,9 @@ const ShoppingCart = (props) => {
                 </button>
                 <button
                     type="button"
-                    className={selectedItems.length === 0 ? "shopping-cart-button-disabled" : "shopping-cart-button"}
+                    className={selectedItemIDList.length === 0 ? "shopping-cart-button-disabled" : "shopping-cart-button"}
                     onClick={removeSelectedItems}
-                    disabled={selectedItems.length === 0 ? true : false}>
+                    disabled={selectedItemIDList.length === 0 ? true : false}>
                     Remove Selected Items
                 </button>
             </div>) : (undefined)}
@@ -132,7 +142,17 @@ const ShoppingCart = (props) => {
                     const itemId = item.product.productID
                     return (
                         <div id={`item-${itemId}`} key={itemId} className="list-group list-group-horizontal-lg margin-bot">
-                            <ShoppingCartItem item={item} isSelected={selectedItems.includes(itemId)} onSelected={() => onSelected(itemId)} onRemove={() => removeItems([itemId])} />
+                            <ShoppingCartItem
+                                SERVER_URL={props.SERVER_URL}
+                                user={props.user}
+                                updateUser={props.updateUser}
+                                userToken={props.userToken}
+                                updateUserToken={props.updateUserToken}
+                                verifyUserToken={props.verifyUserToken}
+                                item={item}
+                                isSelected={selectedItemIDList.includes(itemId)}
+                                onSelected={() => onSelected(itemId)}
+                                onRemove={() => removeItems([itemId])} />
                         </div>
                     )
                 })) : (<div>No item in cart</div>)}
@@ -143,7 +163,7 @@ const ShoppingCart = (props) => {
             <div className="shopping-cart-container15">
               <span className="Content">Subtotal:$ </span>
               <span className="shopping-cart-text20 Content">
-                此处是商品价格
+                {totalValue()}
               </span>
             </div>
             <div className="shopping-cart-container16">
@@ -154,7 +174,7 @@ const ShoppingCart = (props) => {
             <div className="shopping-cart-container17">
               <span className="Content">Total:$ </span>
               <span className="shopping-cart-text23 Content">
-                此处是商品价格
+                {totalValue()}
               </span>
             </div>
             <div className="shopping-cart-container18">
