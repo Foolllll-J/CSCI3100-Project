@@ -161,20 +161,23 @@ const ShoppingCart = (props) => {
           <div className="shopping-cart-container14">
             <h1 className="shopping-cart-text18 Heading-2">SUMMARY</h1>
             <div className="shopping-cart-container15">
-              <span className="Content">Subtotal:$ </span>
+              <span className="Content">Subtotal</span>
               <span className="shopping-cart-text20 Content">
-                {totalValue()}
+                {totalValue()} HKD
               </span>
             </div>
             <div className="shopping-cart-container16">
               <span className="Content">
-                Estimated Delivery &amp; Handling                    Free
+                Estimated Delivery<br />&amp; Handling
+              </span>
+              <span className='shopping-cart-text20 Content'>
+                Free
               </span>
             </div>
             <div className="shopping-cart-container17">
-              <span className="Content">Total:$ </span>
-              <span className="shopping-cart-text23 Content">
-                {totalValue()}
+              <span className="Content">Total</span>
+              <span className="shopping-cart-text20 Content">
+                {totalValue()} HKD
               </span>
             </div>
             <div className="shopping-cart-container18">
