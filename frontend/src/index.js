@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react'
 import ReactDOM from 'react-dom'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
   BrowserRouter as Router,
   Route,
   Switch,
   Redirect,
 } from 'react-router-dom'
+import axios from 'axios'
 
 import './style.css'
 import ProductInfo from './views/product-info'
@@ -22,15 +23,36 @@ import Home from './views/home'
 import NotFound from './views/not-found'
 import Login from './views/login'
 import Signup from './views/signup'
-import axios from 'axios'
+import SearchBox from './components/navigator-search-box'
 
 const SERVER_URL = 'localhost:5000'
 
-const App = () => {
-    const history = useHistory();
-
+function App() {
     const [user, setUser] = useState({})
     const [userToken, setUserToken] = useState('')
+    const [searchText, setSearchText] = useState('')
+    const [searchCategory, setSearchCategory] = useState('')
+
+    const [isToastShown, setIsToastShown] = useState(false)
+    const [toastText, setToastText] = useState('')
+
+    useEffect(() => {
+        const fetchToken = async () => {
+            try {
+                await getUserAndToken();
+            } catch (error) {
+                if (error.message === 'User token not found') {
+                    updateUser({});
+                    updateUserToken('');
+                    window.location.href = '/login';
+                } else {
+                    console.log('Error:', error.message);
+                }
+            }
+        };
+      
+        fetchToken();
+    }, []);
 
     const updateUser = (user) => {
         localStorage.setItem('user', JSON.stringify(user))
@@ -96,43 +118,21 @@ const App = () => {
         }
     }
 
-    useEffect(() => {
-        const fetchToken = async () => {
-            try {
-                await getUserAndToken();
-            } catch (error) {
-                if (error.message === 'User token not found') {
-                    updateUser({});
-                    updateUserToken('');
-                    window.location.href = '/login';
-                } else {
-                    console.log('Error:', error.message);
-                }
-            }
-        };
-      
-        fetchToken();
-    }, []);
+    const showToast = (text, time) => {
+        setToastText(text);
+        setIsToastShown(true);
+    
+        setTimeout(() => {
+          setIsToastShown(false);
+        }, time);
+      }
 
     return (
         <Router>
             <div className="home-navbar">
                 <header data-role="Header" className="home-header max-width-container">
                     <div className="home-navbar1">
-                        <div className="home-container01">
-                            <Link to="/search" className="home-navlink">
-                                <img
-                                    alt="search3271286"
-                                    src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMjQnIGhlaWdodD0nMjQnIHZpZXdCb3g9JzAgMCAyNCAyNCcgZmlsbD0nbm9uZScgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz4KPHBhdGggZmlsbC1ydWxlPSdldmVub2RkJyBjbGlwLXJ1bGU9J2V2ZW5vZGQnIGQ9J00xOC4zMTkgMTQuNDMyNkMyMC43NjI4IDExLjI5NDEgMjAuNTQyIDYuNzUzNDQgMTcuNjU2OSAzLjg2ODI2QzE0LjUzMjcgMC43NDQwNjcgOS40NjczNCAwLjc0NDA2NyA2LjM0MzE1IDMuODY4MjZDMy4yMTg5NSA2Ljk5MjQ2IDMuMjE4OTUgMTIuMDU3OCA2LjM0MzE1IDE1LjE4MkM5LjIyODMzIDE4LjA2NzIgMTMuNzY5IDE4LjI4NzkgMTYuOTA3NSAxNS44NDQyQzE2LjkyMSAxNS44NTk0IDE2LjkzNTEgMTUuODc0NCAxNi45NDk3IDE1Ljg4OTFMMjEuMTkyNCAyMC4xMzE3QzIxLjU4MjkgMjAuNTIyMiAyMi4yMTYxIDIwLjUyMjIgMjIuNjA2NiAyMC4xMzE3QzIyLjk5NzEgMTkuNzQxMiAyMi45OTcxIDE5LjEwOCAyMi42MDY2IDE4LjcxNzVMMTguMzY0IDE0LjQ3NDlDMTguMzQ5MyAxNC40NjAyIDE4LjMzNDMgMTQuNDQ2MSAxOC4zMTkgMTQuNDMyNlpNMTYuMjQyNiA1LjI4MjQ4QzE4LjU4NTggNy42MjU2MiAxOC41ODU4IDExLjQyNDYgMTYuMjQyNiAxMy43Njc4QzEzLjg5OTUgMTYuMTEwOSAxMC4xMDA1IDE2LjExMDkgNy43NTczNiAxMy43Njc4QzUuNDE0MjEgMTEuNDI0NiA1LjQxNDIxIDcuNjI1NjIgNy43NTczNiA1LjI4MjQ4QzEwLjEwMDUgMi45MzkzMyAxMy44OTk1IDIuOTM5MzMgMTYuMjQyNiA1LjI4MjQ4WicgZmlsbD0nYmxhY2snLz4KPC9zdmc+Cg=="
-                                    className="home-image"
-                                />
-                            </Link>
-                            <input
-                                type="text"
-                                placeholder="search"
-                                className="home-textinput input"
-                            />
-                        </div>
+                        <SearchBox searchText={searchText} setSearchText={setSearchText} />
                         <div className="home-middle">
                             <Link to='/' className="home-logo-center navbar-logo-title">
                                 MARTCUHK
@@ -165,59 +165,91 @@ const App = () => {
                         </svg>
                     </div>
                 </header>
+                {isToastShown && (
+                    <div className="toast">
+                        <div className="toast-content">{toastText}</div>
+                    </div>
+                )}
             </div>
         <Switch>
-            <Route exact path="/product-info" render={(props) => <ProductInfo {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/checkout" render={(props) => <Checkout {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/past-orders" render={(props) => <PastOrders {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/search" render={(props) => <Search {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/track-order" render={(props) => <TrackOrder {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/payment-system" render={(props) => <PaymentSystem {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/payment-success" render={(props) => <PaymentSuccess {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/shopping-cart" render={(props) => <ShoppingCart {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
-            <Route exact path="/review-and-rating" render={(props) => <ReviewAndRating {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} />} />
+            <Route
+                exact
+                path="/product-info/:id"
+                render={(props) => <ProductInfo 
+                                    {...props}
+                                    SERVER_URL={SERVER_URL}
+                                    user={user}
+                                    updateUser={updateUser}
+                                    userToken={userToken}
+                                    updateUserToken={updateUserToken}
+                                    getUserAndToken={getUserAndToken}
+                                    verifyUserToken={verifyUserToken}
+                                    showToast={showToast}/>} />
+            <Route exact path="/checkout" render={(props) => <Checkout {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} showToast={showToast} />} />
+            <Route exact path="/past-orders" render={(props) => <PastOrders {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} showToast={showToast} />} />
+            <Route
+                exact
+                path="/search/:keyword/:category/:page"
+                render={(props) => <Search
+                                    {...props}
+                                    SERVER_URL={SERVER_URL}
+                                    user={user}
+                                    updateUser={updateUser}
+                                    userToken={userToken}
+                                    updateUserToken={updateUserToken}
+                                    getUserAndToken={getUserAndToken}
+                                    verifyUserToken={verifyUserToken}
+                                    showToast={showToast} />} />
+            <Route exact path="/track-order" render={(props) => <TrackOrder {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} showToast={showToast} />} />
+            <Route exact path="/payment-system" render={(props) => <PaymentSystem {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} showToast={showToast} />} />
+            <Route exact path="/payment-success" render={(props) => <PaymentSuccess {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} showToast={showToast} />} />
+            <Route exact path="/shopping-cart" render={(props) => <ShoppingCart {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} showToast={showToast} />} />
+            <Route exact path="/review-and-rating" render={(props) => <ReviewAndRating {...props} SERVER_URL={SERVER_URL} user={user} updateUser={updateUser} userToken={userToken} updateUserToken={updateUserToken} getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken} showToast={showToast} />} />
             <Route exact path="/" component={Home} />
             <Route
-            exact
-            path='/login'
-            render={(props) => {
-                if (!(user && user.userName && userToken !== '')) {
-                return (
-                    <Login
-                        {...props}
-                        SERVER_URL={SERVER_URL}
-                        user={user}
-                        updateUser={updateUser}
-                        userToken={userToken}
-                        updateUserToken={updateUserToken}
-                        getUserAndToken={getUserAndToken} verifyUserToken={verifyUserToken}
-                    />
-                );
-                } else {
-                    return <Redirect to="/" />;
-                }
-            }}
+                exact
+                path='/login'
+                render={(props) => {
+                    if (!(user && user.userName && userToken !== '')) {
+                    return (
+                        <Login
+                            {...props}
+                            SERVER_URL={SERVER_URL}
+                            user={user}
+                            updateUser={updateUser}
+                            userToken={userToken}
+                            updateUserToken={updateUserToken}
+                            getUserAndToken={getUserAndToken}
+                            verifyUserToken={verifyUserToken}
+                            showToast={showToast}
+                        />
+                    );
+                    } else {
+                        return <Redirect to="/" />;
+                    }
+                }}
             />     
             <Route
-            exact
-            path='/signup'
-            render={(props) => {
-                if (!(user && user.userName && userToken !== '')) {
-                return (
-                    <Signup
-                        {...props}
-                        SERVER_URL={SERVER_URL}
-                        user={user}
-                        updateUser={updateUser}
-                        userToken={userToken}
-                        updateUserToken={updateUserToken}
-                        verifyUserToken={verifyUserToken}
-                    />
-                );
-                } else {
-                    return <Redirect to="/" />;
-                }
-            }}
+                exact
+                path='/signup'
+                render={(props) => {
+                    if (!(user && user.userName && userToken !== '')) {
+                    return (
+                        <Signup
+                            {...props}
+                            SERVER_URL={SERVER_URL}
+                            user={user}
+                            updateUser={updateUser}
+                            userToken={userToken}
+                            updateUserToken={updateUserToken}
+                            verifyUserToken={verifyUserToken}
+                            showToast={showToast}
+                        />
+                    );
+                    } else {
+                        return <Redirect to="/" />;
+                    }
+                }}
             />             
             <Route component={NotFound} path="**" />
             <Redirect to="**" />

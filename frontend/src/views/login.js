@@ -102,7 +102,7 @@ function Login(props) {
             <div className='login-form' style={{display: status === 'email-verification' ? 'flex' : 'none'}}>
                 <h1 className='Heading-1'>Log in</h1>
                 <p style={{marginTop: '2vh', fontSize: '18px', fontWeight: '300'}}>A verification email is sent to your mail address.<br />Please check it and input the verification code.</p>
-                <form onSubmit={(e) => emailVerification(e)}>
+                <form>
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '4vh'}}>
                         <label htmlFor="verification-code" className='lb' style={{fontSize: '20px', fontWeight: '400'}}>Verification code</label>
                         <input
@@ -117,7 +117,7 @@ function Login(props) {
                             key="verification-code-input"
                         />
                     </div>
-                    <button type="submit" id='submit-code' className="button" style={{margin: '6vh 0', left: '50%', transform: 'translateX(-50%)', width: '100px', display: 'flex', justifyContent: 'center' }}><p>Submit</p></button>
+                    <button onClick={(e) => emailVerification(e)} id='submit-code' className="button" style={{margin: '6vh 0', left: '50%', transform: 'translateX(-50%)', width: '100px', display: 'flex', justifyContent: 'center' }}><p>Submit</p></button>
                 </form>
                 {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
             </div>

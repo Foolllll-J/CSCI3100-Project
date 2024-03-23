@@ -5,13 +5,6 @@ import ShoppingCartItem from '../components/shopping-cart-item-card'
 import './shopping-cart.css'
 import axios from 'axios'
 
-/**
- * Todo:
- * 右侧的布局
- * remove、加选择和全选
- * 传入参数
- */
-
 const ShoppingCart = (props) => {
     const [selectStatusText, setSelectStatusText] = useState('Select All')
     const [itemList, setItemList] = useState([])
@@ -98,6 +91,7 @@ const ShoppingCart = (props) => {
             const updatedUser = {...props.user}
             updatedUser.shoppingCartInfo = response.data.updatedCartContent
             props.updateUser(updatedUser)
+            props.showToast('Item removed from cart!', 1000)
         } catch (error) {
             console.log(error)
         }

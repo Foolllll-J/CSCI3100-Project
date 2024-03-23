@@ -93,6 +93,9 @@ const ShoppingCartItem = (props) => {
                     </div>
                 </div>
                 <div className="shopping-cart-container08">
+                    <div style={{paddingTop: '55px'}}>
+                        <span style={{wordWrap: 'break-word'}}>{itemObj.product.productID}</span>
+                    </div>
                     <div className="shopping-cart-text14">
                         <span style={{wordWrap: 'break-word'}}>{itemObj.product.productName}</span>
                     </div>

@@ -22,7 +22,7 @@
 * ```productPrice```: number  
 * ```productDescription```: string  
 * ```productImage```: string  
-* ```productTag```: array, a list of string tags  
+* ```productCategory```: array, a list of string tags  
 
 3. Order:  
 * ```orderID```: string, unique
@@ -157,7 +157,7 @@ res.status(500).json({ message: 'Failed to log out. Please submit a valid user t
 ```
 
 ### 用户操作
-对于下文涉及的所有需要提交userToken的函数，以及上文的logout函数，请遵循以下原则：  
+对于下文涉及的所有需要提交userToken的函数，以及上文的logout函数，除获取推荐商品和搜索结果外，请遵循以下原则：  
 * 如果userToken信息正确且未过期，正常执行对应部分的功能
 * 如果userToken信息不正确或已过期，则直接返回一个```res.status(400).json({ message: 'Expired or wrong user token' })```，若过期则在服务器端将对应user的isActive属性设置为false
 * 下文中不再单独列出userToken信息不正确或已过期的返回值
@@ -174,8 +174,6 @@ post('/api/verify-user-token', {
 ```
 res.status(200)
 ```
-
-验证失败的res见上  
 
 2. 获取购物车中商品的详细信息  
 由于user.shoppingCartInfo中储存的商品信息仅包括商品id和数量，所以在访问购物车页面时，需要通过商品id获取商品详细信息：  
@@ -211,7 +209,7 @@ res中shoppingCartItem的一个元素：
         productPrice,
         productDescription,
         productImage,
-        productTag
+        productCategory
     },
     quantity: quantity
 }
@@ -237,4 +235,67 @@ post('/api/update-shopping-cart', {
 购物车更新失败（如果真的是服务器出什么问题导致购物车更新失败了）的res:  
 ```
 res.status(500).json({ message: 'Failed to update your shopping cart. Please submit a valid user token or try later.' });
+```
+
+4. 获取搜索结果：  
+req:  
+```
+post('/api/fetch-search-results', {
+    keyword: 一个string，可能是商品关键词或者商品ID,
+    category: 一个string，以'#'开头，例如'#desks',
+    page: number,
+    userToken
+})
+```
+
+正常搜索到结果的res:
+```
+{
+  searchResults: array,
+  quantity: 一个number，表示搜索结果的总个数
+}
+```
+其中searchResults的元素为：  
+```
+{
+    productID,
+    productName,
+    productPrice,
+    productDescription,
+    productImage,
+    productCategory
+}
+```
+在这部分的设计中，每一页仅显示8个商品，所以page也是req的一部分。例如，搜索的关键词为'wooden'，category为'#desks'，page为1，假设搜索结果共有21个商品，那么res中quantity为21，而searchResults应该包含前8个商品。而当用户访问第二页，page变为2时，则searchResults变为包含第9到第16个商品。如果没有搜索到结果，则searchResults为空数组、quantity为0即可。  
+如果userToken信息正确且未过期，返回的searchResults须经过推荐算法排序。  
+如果检测到userToken信息不正确或已过期，不用返回```res.status(400).json({ message: 'Expired or wrong user token' })```的报错结果，而是正常返回没有推荐算法的普通搜索结果。  
+
+搜索失败（如果真的是服务器出什么问题导致搜索失败了）的res:  
+```
+res.status(500).json({ message: 'Failed to search for the products. Please try later.' });
+```
+
+5. 获取商品详情：  
+req:  
+```
+post('/api/fetch-product-info', {
+    productID
+})
+```
+
+获取成功的res:
+```
+{
+    productID,
+    productName,
+    productPrice,
+    productDescription,
+    productImage,
+    productCategory
+}
+```
+
+获取失败（如果真的是服务器出什么问题导致获取失败了）的res:  
+```
+res.status(500).json({ message: 'Failed to fetch the product info. Please try later.' });
 ```

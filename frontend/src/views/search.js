@@ -1,10 +1,136 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
 
 import ProductCard from '../components/product-card'
 import './search.css'
 
+// Todo: 主页按类别搜索；按价格过滤
+
 const Search = (props) => {
+    const [displayedProducts, setDisplayedProducts] = useState([])
+    const [resultQuantity, setResultQuantity] = useState(0)
+    const [resultPageQuantity, setResultPageQuantity] = useState(0)
+
+    const { keyword, category, page } = useParams();
+
+    const fetchSearchResults = async (keyword='', category='', page=1, userToken='') => {
+        try {
+            const response = await axios.post(`http://${props.SERVER_URL}/api/fetch-search-results`, {
+                keyword: keyword,
+                category: category,
+                page: page,
+                userToken: userToken
+            })
+            setDisplayedProducts(response.data.searchResults)
+            setResultQuantity(response.data.quantity)
+            setResultPageQuantity(Math.ceil(response.data.quantity / 8))
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                console.log(error.response.data.message)
+            } else {
+                console.log('Some error occurs. Please try again later.')
+            }
+        }
+    }
+
+    useEffect(() => {
+        fetchSearchResults(keyword, category, page, props.userToken)
+    }, [keyword, category, page, props.userToken])
+
+    const PageNumbers = () => {
+        if (Number(page) === 0 || resultPageQuantity === 0) {
+            return <span></span>
+        } else if (resultPageQuantity > 0 && resultPageQuantity <= 5) {
+            return (
+                <div className="search-pages">
+                    <div className="search-primary">
+                        {[...Array(resultPageQuantity)].map((_, index) => (
+                            <Link to={`/search/${keyword}/${category}/${index+1}`} key={index} className={index + 1 === Number(page) ? "search-number-current page-current page" : "page"}>
+                                <span className="search-text">{index + 1}</span>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )
+        } else if (resultPageQuantity > 5) {
+            if (Number(page) <= 3) {
+                return (
+                    <div className="search-pages">
+                        <div className="search-primary">
+                            {[...Array(resultPageQuantity)].slice(0, Number(page) + 1).map((_, index) => (
+                                <Link to={`/search/${keyword}/${category}/${index+1}`} key={index} className={index + 1 === Number(page) ? "search-number-current page-current page" : "page"}>
+                                    <span className="search-text">{index + 1}</span>
+                                </Link>
+                            ))}
+                            <img
+                                alt="image"
+                                src="/external/more.svg"
+                                className="search-more"
+                            />
+                            <Link to={`/search/${keyword}/${category}/${resultPageQuantity}`} className="page">
+                                <span className="search-text20">{resultPageQuantity}</span>
+                            </Link>
+                        </div>
+                    </div>
+                )
+            } else if (Number(page) > 3 && Number(page) < resultPageQuantity - 2) {
+                return (
+                    <div className="search-pages">
+                        <div className="search-primary">
+                            <Link to={`/search/${keyword}/${category}/1`} className="page">
+                                <span className="search-text20">{1}</span>
+                            </Link>
+                            <img
+                                alt="image"
+                                src="/external/more.svg"
+                                className="search-more"
+                            />
+                            {[...Array(resultPageQuantity)].slice(Number(page) - 2, Number(page) + 1).map((_, index) => (
+                                <Link to={`/search/${keyword}/${category}/${Number(page)+index-1}`} key={index} className={Number(page)+index-1 === Number(page) ? "search-number-current page-current page" : "page"}>
+                                    <span className="search-text">{Number(page) + index - 1}</span>
+                                </Link>
+                            ))}
+                            <img
+                                alt="image"
+                                src="/external/more.svg"
+                                className="search-more"
+                            />
+                            <Link to={`/search/${keyword}/${category}/${resultPageQuantity}`} className="page">
+                                <span className="search-text20">{resultPageQuantity}</span>
+                            </Link>
+                        </div>
+                    </div>
+                )
+            } else if (Number(page) <= resultPageQuantity) {
+                return (
+                    <div className="search-pages">
+                        <div className="search-primary">
+                            <Link to={`/search/${keyword}/${category}/1`} className="page">
+                                <span className="search-text20">1</span>
+                            </Link>
+                            <img
+                                alt="image"
+                                src="/external/more.svg"
+                                className="search-more"
+                            />
+                            {[...Array(resultPageQuantity)].slice(Number(page) - 2, resultPageQuantity).map((_, index) => (
+                                <Link to={`/search/${keyword}/${category}/${Number(page)+index-1}`} key={index} className={Number(page)+index-1 === Number(page) ? "search-number-current page-current page" : "page"}>
+                                    <span className="search-text">{Number(page)+index - 1}</span>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                )
+            } else {
+                return (
+                    <span></span>
+                )
+            } 
+        }
+    }
+    
   return (
     <div className="search-container">
       <div className="search-main">
@@ -18,95 +144,45 @@ const Search = (props) => {
               </h1>
             </div>
             <div className="search-speakers-container">
-              <Link to="/product-info">
-                <ProductCard
-                  aAAA="商品信息1"
-                  lastName="价格1"
-                  productName="商品1"
-                  rootClassName="product-card-root-class-name"
-                  className="search-component"
-                ></ProductCard>
-              </Link>
-              <ProductCard
-                aAAA="digital marketing associate @ WPP"
-                imageSrc="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=Mnw5MTMyMXwwfDF8c2VhcmNofDF8fHBlb3BsZXxlbnwwfHx8fDE2NDM3MDU1MTE&amp;ixlib=rb-1.2.1&amp;h=300"
-                lastName="Simpson"
-                productName="Mellisa"
-              ></ProductCard>
-              <ProductCard
-                aAAA="VP OF Marketing @ BUZZFEED"
-                imageSrc="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixid=Mnw5MTMyMXwwfDF8c2VhcmNofDZ8fHBlb3BsZXxlbnwwfHx8fDE2NDM3MDU1MTE&amp;ixlib=rb-1.2.1&amp;h=300"
-                lastName="tevlenko"
-                productName="alina"
-              ></ProductCard>
-              <ProductCard
-                aAAA="HEAD OF DIGITAL @ HUBSPOT"
-                imageSrc="https://images.unsplash.com/photo-1537511446984-935f663eb1f4?ixid=Mnw5MTMyMXwwfDF8c2VhcmNofDI5fHxwZW9wbGV8ZW58MHx8fHwxNjQzNzA1NTEx&amp;ixlib=rb-1.2.1&amp;h=300"
-                lastName="iprovich"
-                productName="gregor"
-              ></ProductCard>
-              <ProductCard
-                aAAA="marketing officer @ salesforce"
-                imageSrc="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixid=Mnw5MTMyMXwwfDF8c2VhcmNofDExfHxwZW9wbGV8ZW58MHx8fHwxNjQzNzA1NTEx&amp;ixlib=rb-1.2.1&amp;h=300"
-                lastName="daris"
-                productName="damian"
-              ></ProductCard>
-              <ProductCard
-                aAAA="social media manager @ vodafone"
-                imageSrc="https://images.unsplash.com/photo-1531384441138-2736e62e0919?ixid=Mnw5MTMyMXwwfDF8c2VhcmNofDE0N3x8cGVvcGxlfGVufDB8fHx8MTY0MzcwODY5MQ&amp;ixlib=rb-1.2.1&amp;h=300"
-                lastName="warren"
-                productName="matt"
-              ></ProductCard>
-              <ProductCard
-                aAAA="creative director @ BBDO"
-                imageSrc="https://images.unsplash.com/photo-1589156280159-27698a70f29e?ixid=Mnw5MTMyMXwwfDF8c2VhcmNofDE2OHx8cGVvcGxlfGVufDB8fHx8MTY0MzcwODY5MQ&amp;ixlib=rb-1.2.1&amp;h=300"
-                lastName="moore"
-                productName="kathie"
-              ></ProductCard>
-              <ProductCard
-                aAAA="CMO @ youtube Europe"
-                imageSrc="https://images.unsplash.com/photo-1558222218-b7b54eede3f3?ixid=Mnw5MTMyMXwwfDF8c2VhcmNofDEwNHx8cGVvcGxlfGVufDB8fHx8MTY0MzcwODY4MQ&amp;ixlib=rb-1.2.1&amp;h=300"
-                lastName="chan"
-                productName="erick"
-              ></ProductCard>
+                {(displayedProducts && displayedProducts instanceof Array && displayedProducts.length !== 0) ? (displayedProducts.map(item => {
+                    const itemId = item.productID
+                    return (
+                        <Link key={itemId} to={`/product-info/${item.productID}`}>
+                            <ProductCard
+                                productID={`${item.productID}`}
+                                productPrice={`${item.productPrice}`}
+                                productName={`${item.productName}`}
+                                rootClassName="product-card-root-class-name"
+                                className="search-component"
+                            ></ProductCard>
+                        </Link>
+                    )
+                })) : (<div>No product matched</div>)}
+              
             </div>
           </div>
         </div>
         <div className="search-container3">
           <div className="search-pagination">
-            <button className="search-previous button-option button">
+            <Link
+                to={`/search/${keyword}/${category}/${Number(page)-1}`}
+                className="search-previous button-option button" 
+                style={(Number(page) > 1 && Number(page) <= resultPageQuantity) ? {display: 'flex'} : {display: 'none'}}>
               <svg viewBox="0 0 1024 1024" className="search-icon10">
                 <path d="M658 708l-60 60-256-256 256-256 60 60-196 196z"></path>
               </svg>
               <span className="search-text16">Previous</span>
-            </button>
-            <div className="search-pages">
-              <div className="search-primary">
-                <div className="search-number-current page-current page">
-                  <span className="search-text17">1</span>
-                </div>
-                <div className="page">
-                  <span className="search-text18">2</span>
-                </div>
-                <div className="page search-number1">
-                  <span className="search-text19">3</span>
-                </div>
-              </div>
-              <img
-                alt="image"
-                src="/external/more.svg"
-                className="search-more"
-              />
-              <div className="page">
-                <span className="search-text20">12</span>
-              </div>
-            </div>
-            <button className="search-next button-option button">
+            </Link>
+            <PageNumbers />
+            <Link
+                to={`/search/${keyword}/${category}/${Number(page)+1}`} 
+                className="search-next button-option button"
+                style={(Number(page) > 0 && Number(page) < resultPageQuantity) ? {display: 'flex'} : {display: 'none'}}>
               <span className="search-text21">Next</span>
               <svg viewBox="0 0 1024 1024" className="search-icon12">
                 <path d="M426 256l256 256-256 256-60-60 196-196-196-196z"></path>
               </svg>
-            </button>
+            </Link>
           </div>
         </div>
       </div>
