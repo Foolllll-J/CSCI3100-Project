@@ -5,7 +5,9 @@ import axios from 'axios'
 
 const ShoppingCartItem = (props) => {
     const [itemObj, setItemObj] = useState(props.item)
-    const [number, setNumber] = useState(props.user.shoppingCartInfo.find(item => item.productID === itemObj.product.productID).quantity)
+    const [number, setNumber] = useState(props.user.shoppingCartInfo.find(item => item.productID === itemObj.product.productID) ? 
+                                         props.user.shoppingCartInfo.find(item => item.productID === itemObj.product.productID).quantity :
+                                         undefined)
     const [isSelected, setIsSelected] = useState(props.isSelected)
 
     const debounceTimerRef = useRef(null);
@@ -28,7 +30,7 @@ const ShoppingCartItem = (props) => {
             setNumber(inputValue);
             debounceTimerRef.current = setTimeout(async () => {
                 const shoppingCartInfo = [...props.user.shoppingCartInfo]
-                shoppingCartInfo.find(item => item.productID === itemObj.product.productID).quantity = parseInt(inputValue)
+                shoppingCartInfo.find(item => item.productID === itemObj.product.productID) ? shoppingCartInfo.find(item => item.productID === itemObj.product.productID).quantity = parseInt(inputValue) : undefined
                 try {
                     const response = await axios.post(`http://${props.SERVER_URL}/api/update-shopping-cart`, {
                         newCartContent: shoppingCartInfo,

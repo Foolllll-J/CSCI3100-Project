@@ -175,8 +175,8 @@ const ShoppingCart = (props) => {
               </span>
             </div>
             <div className="shopping-cart-container17">
-              <span className="Content">Total</span>
-              <span className="shopping-cart-text20 Content">
+              <span className="Content" style={{fontSize: '20px', fontWeight: '600'}}>Total</span>
+              <span className="shopping-cart-text20 Content" style={{fontSize: '20px', fontWeight: '500'}}>
                 {totalValue()} HKD
               </span>
             </div>
