@@ -138,7 +138,8 @@ app.post('/api/fetch-shopping-cart-items', (req, res) => {
                         productPrice: `${id}`,
                         productDescription: `description${id}`,
                         productImage: 'imageUrl1',
-                        productCategory: []
+                        productCategory: [],
+                        productScore: 5
                     },
                     quantity: quantity
                 })
@@ -171,7 +172,8 @@ app.post('/api/fetch-search-results', (req, res) => {
                     productPrice: `${id}`,
                     productDescription: `description${id}`,
                     productImage: 'imageUrl1',
-                    productCategory: []
+                    productCategory: [],
+                    productScore: 5
                 })
         }
         res.status(200).json({
