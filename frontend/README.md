@@ -22,6 +22,7 @@
 * ```productPrice```: number  
 * ```productDescription```: string  
 * ```productImage```: string  
+* ```productScore```: number  
 * ```productCategory```: array, a list of string tags  
 
 3. Order:  
