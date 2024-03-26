@@ -210,7 +210,8 @@ res中shoppingCartItem的一个元素：
         productPrice,
         productDescription,
         productImage,
-        productCategory
+        productCategory,  
+        productScore
     },
     quantity: quantity
 }
@@ -264,7 +265,8 @@ post('/api/fetch-search-results', {
     productPrice,
     productDescription,
     productImage,
-    productCategory
+    productCategory,
+    productScore
 }
 ```
 在这部分的设计中，每一页仅显示8个商品，所以page也是req的一部分。例如，搜索的关键词为'wooden'，category为'#desks'，page为1，假设搜索结果共有21个商品，那么res中quantity为21，而searchResults应该包含前8个商品。而当用户访问第二页，page变为2时，则searchResults变为包含第9到第16个商品。如果没有搜索到结果，则searchResults为空数组、quantity为0即可。  
@@ -292,7 +294,8 @@ post('/api/fetch-product-info', {
     productPrice,
     productDescription,
     productImage,
-    productCategory
+    productCategory,
+    productScore
 }
 ```
 
