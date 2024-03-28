@@ -24,6 +24,7 @@
 * ```productImage```: string  
 * ```productScore```: number  
 * ```productCategory```: array, a list of string tags  
+* ```commentList```: array, a list of comments  
 
 3. Order:  
 * ```orderID```: string, unique
@@ -295,7 +296,8 @@ post('/api/fetch-product-info', {
     productDescription,
     productImage,
     productCategory,
-    productScore
+    productScore,
+    commentList
 }
 ```
 
